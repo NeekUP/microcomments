@@ -24,11 +24,10 @@ namespace Authentication.Domain
             if( hashProvider == null)
                 throw new ArgumentException( nameof( hashProvider ) );
 
-            string idnPass = ToPunyCode( password );
-            var (hash, salt) = hashProvider.HashPassword( idnPass );
+            var (hash, salt) = hashProvider.HashPassword( password );
 
             Email = email ?? throw new ArgumentException( nameof( email ) );
-            NormalizedEmail = ToPunyCode( email.ToLower() );
+            NormalizedEmail = email.ToLower();
             Name = name ?? throw new ArgumentException( nameof( name ) );
             PasswordHash = hash;
             Salt = salt; 
@@ -44,16 +43,25 @@ namespace Authentication.Domain
             Salt = salt;
         }
 
-        public void SetEmailAsConfirmed()
+        public void SetEmailConfirmation()
+        {
+            EmailConfirmationSecret = Guid.NewGuid().ToString("N");
+        }
+        
+        public void MarkEmailAsConfirmed()
         {
             EmailConfirmationSecret = null;
             EmailConfirmed = true;
         }
 
+        public bool IsEmailConfirmationValid(Guid confirmation)
+        {
+            return EmailConfirmationSecret != confirmation.ToString("N");
+        }
+        
         public bool IsValidPassword( string password, IHashProvider hashProvider )
         {
-            string idnPass = ToPunyCode( password );
-            var hash = hashProvider.Hash( Encoding.UTF8.GetBytes( idnPass ), Salt );
+            var hash = hashProvider.Hash( Encoding.UTF8.GetBytes( password ), Salt );
 
             if ( PasswordHash.Length != hash.Length )
                 return false;
@@ -65,11 +73,6 @@ namespace Authentication.Domain
             }
 
             return true;
-        }
-
-        private static string ToPunyCode( string str )
-        {
-            return new IdnMapping().GetAscii( str );
         }
     }
 }

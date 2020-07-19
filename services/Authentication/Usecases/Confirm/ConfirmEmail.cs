@@ -28,10 +28,10 @@ namespace Authentication.Usecases
             if( user.EmailConfirmed )
                 return Result<ConfirmEmailResponse>.Ok( new ConfirmEmailResponse( true ) );
 
-            if ( user.EmailConfirmationSecret != model.Secret.ToString() )
+            if ( user.IsEmailConfirmationValid(model.Secret) )
                 return Result<ConfirmEmailResponse>.Fail( Error.FORBIDDEN );
 
-            user.SetEmailAsConfirmed();
+            user.MarkEmailAsConfirmed();
 
             try
             {

@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Authentication.Usecases
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         ITokensRepository Tokens { get; }
         IUsersRepository Users { get; }
 
-        void Dispose();
         Task SaveAsync();
     }
 }
