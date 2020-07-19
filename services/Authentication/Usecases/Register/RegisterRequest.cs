@@ -6,7 +6,7 @@ namespace Authentication.Usecases
     public class RegisterRequest : Validatable
     {
         [Required()]
-        [StringLength( maximumLength: 64, MinimumLength = 6 )]
+        [StringLength( maximumLength: 64, MinimumLength = 2 )]
         [RegularExpression( @"^[^\r\n\s]+$" )]
         public string Name { get; }
 

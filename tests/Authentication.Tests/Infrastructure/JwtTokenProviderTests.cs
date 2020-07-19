@@ -72,7 +72,6 @@ namespace Authentication.Tests
 
         private class MessageTokenPayload : TokenPayload
         {
-            public double Exp { get; set; }
             public string Message { get; set; }
 
             public MessageTokenPayload( string message )
